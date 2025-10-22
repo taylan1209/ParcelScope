@@ -1,0 +1,41 @@
+# Example configuration for parcel visualization layers.
+default_crs: 4326
+buffer_feet: 250
+cache:
+  backend: sqlite
+  path: ./cache/http_cache.sqlite
+  expire_hours: 12
+
+parcels:
+  provider: arcgis
+  url: https://sampleserver.arcgisonline.com/ArcGIS/rest/services/Parcels/FeatureServer/0
+  id_field: PARCEL_ID
+  address_field: SITE_ADDR
+  target_epsg: 2264
+
+layers:
+  zoning:
+    type: arcgis_feature
+    url: https://sampleserver.arcgisonline.com/ArcGIS/rest/services/Zoning/FeatureServer/0
+    label_field: ZONING
+    target_epsg: 2264
+    style:
+      fill_alpha: 0.4
+      color: "#004b8d"
+  flood:
+    type: wms
+    url: https://hazards.fema.gov/gis/nfhl/rest/services/public/NFHL/MapServer/WmsServer
+    layers: Flood_Hazard_Zones
+    target_epsg: 3857
+  soils:
+    type: wms
+    url: https://sdmdataaccess.sc.egov.usda.gov/Spatial/SDM.wms
+    layers: MapunitPoly
+    target_epsg: 3857
+  contours:
+    type: arcgis_feature
+    url: https://elevation.arcgis.com/arcgis/rest/services/USA_Contours/FeatureServer/0
+    target_epsg: 3857
+    style:
+      line_color: "#6d7878"
+      interval_feet: 5

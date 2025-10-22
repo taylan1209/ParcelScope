@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ParcelViz</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <section class="panel">
+        <h1>ParcelViz</h1>
+        <form id="render-form">
+          <label>
+            Address
+            <input type="text" id="address" placeholder="123 Old Airport Rd, AnyTown, NC" />
+          </label>
+          <label>
+            APN
+            <input type="text" id="apn" placeholder="123-45-6789" />
+          </label>
+          <label>
+            Layers (comma separated)
+            <input type="text" id="layers" value="zoning,flood,soils,contours" />
+          </label>
+          <label>
+            Buffer (feet)
+            <input type="number" id="buffer" value="250" />
+          </label>
+          <label>
+            Output DPI
+            <input type="number" id="dpi" value="220" />
+          </label>
+          <button type="submit">Render</button>
+        </form>
+        <div id="status"></div>
+      </section>
+      <section class="results" id="results"></section>
+    </main>
+    <script src="main.js" type="module"></script>
+  </body>
+</html>
