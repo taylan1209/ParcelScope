@@ -34,6 +34,17 @@ class SourceConfig:
         return self._raw.get("cache", {})
 
     @property
+    def map_spec(self) -> Mapping[str, Any]:
+        return self._raw.get(
+            "map",
+            {
+                "width_px": 1600,
+                "height_px": 1200,
+                "dpi": 220,
+            },
+        )
+
+    @property
     def parcels(self) -> Mapping[str, Any]:
         parcels = self._raw.get("parcels")
         if not parcels:

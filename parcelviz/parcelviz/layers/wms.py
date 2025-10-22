@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from io import BytesIO
-from typing import Dict
+from typing import Dict, Tuple
 
 import requests
 from PIL import Image
@@ -24,8 +24,12 @@ class WMSLayer:
     def __init__(self, config: LayerConfig) -> None:
         self.config = config
         self.session = requests.Session()
+        url = self.config.params.get("url")
+        if not url:
+            raise WMSLayerError(f"Layer '{self.config.name}' missing 'url' parameter.")
+        self.url = url
 
-    def fetch(self, bbox: Dict[str, float], size: int = 1024) -> Image.Image:
+    def fetch(self, bbox: Dict[str, float], size: Tuple[int, int]) -> Image.Image:
         """Return an image for the requested bounding box."""
 
         params = {
@@ -38,9 +42,9 @@ class WMSLayer:
             "styles": self.config.params.get("styles", ""),
             "crs": f"EPSG:{self.config.target_epsg}",
             "bbox": ",".join(str(bbox[k]) for k in ("xmin", "ymin", "xmax", "ymax")),
-            "width": size,
-            "height": size,
+            "width": size[0],
+            "height": size[1],
         }
-        response = self.session.get(self.config.params["url"], params=params, timeout=30)
+        response = self.session.get(self.url, params=params, timeout=30)
         response.raise_for_status()
         return Image.open(BytesIO(response.content)).convert("RGBA")

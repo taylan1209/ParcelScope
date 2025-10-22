@@ -4,13 +4,13 @@ ParcelViz is a modular toolkit for generating parcel-centric map overlays and im
 
 ## Features
 
-- Configurable data sources via `config/sources.yaml` with per-layer CRS and styling.
+- Configurable data sources via `config/sources.yaml` with per-layer CRS, styling, and map canvas settings.
 - Parcel resolution through LightBox (LandVision) with fallback geocoders.
 - Independent layer adapters for ArcGIS Feature/WMS services, FEMA flood, SSURGO soils, contours, and XYZ tiles.
-- Consistent CRS handling and buffered map extents.
-- On-disk HTTP caching to accelerate repeated requests.
+- Consistent CRS handling, buffered map extents, and parcel highlighting.
+- On-disk HTTP caching (requests-cache) to accelerate repeated requests.
 - FastAPI `/render` endpoint plus CLI entry point.
-- Simple React front-end for submitting render jobs and browsing outputs.
+- Simple static web front-end for submitting render jobs and browsing outputs.
 
 ## Getting Started
 
@@ -21,16 +21,34 @@ pip install -e ".[dev]"
 cp .env.example .env
 ```
 
-Update `.env` with your LightBox credentials and adjust `config/sources.yaml` for your target jurisdictions. Launch the API:
+Update `.env` with your LightBox credentials and adjust `config/sources.yaml` for your target jurisdictions. Launch the API (serves the web UI at `/` and exposes generated imagery under `/outputs`):
 
 ```bash
 uvicorn parcelviz.api:app --reload
 ```
 
-Or run from the CLI:
+Or render directly from the CLI:
 
 ```bash
 parcelviz render --address "123 Main St, City, NC" --layers zoning flood
 ```
 
-Refer to `docs/` (coming soon) for detailed configuration guidance.
+## Configuration
+
+- `config/sources.yaml` carries parcel service metadata (`parcels`), layer adapters, and the default map canvas (`map.width_px`, `map.height_px`, `map.dpi`). Each layer can specify `style` keys such as `fill_alpha`, `line_color`, or WMS `opacity`.
+- Caching defaults to `cache/http_cache.sqlite`; override by editing the config or setting the `CACHE_PATH` environment variable.
+- Parcel buffers are supplied in feet via the API/CLI (`buffer_feet`) and automatically converted to the target layer CRS.
+
+## Web UI
+
+Navigate to `http://localhost:8000/` after starting the API. Provide an address or APN, pick layers, and submit. Results display parcel metadata, gallery thumbnails, download links, and inline warnings surfaced by the pipeline.
+
+## Testing
+
+Unit tests rely on adapter stubs to avoid remote calls:
+
+```bash
+pytest
+```
+
+Ensure dependencies from `.[dev]` are installed before running the suite.

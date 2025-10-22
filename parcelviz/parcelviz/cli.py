@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import logging
-from pathlib import Path
 from typing import List, Optional
 
 import typer
@@ -32,6 +31,11 @@ def render(
     except PipelineError as exc:
         typer.secho(f"Error: {exc}", fg=typer.colors.RED)
         raise typer.Exit(code=1) from exc
+
+    if response.warnings:
+        typer.secho("Warnings:", fg=typer.colors.YELLOW)
+        for warning in response.warnings:
+            typer.echo(f"- {warning}")
 
     typer.secho("Render complete!", fg=typer.colors.GREEN)
     typer.echo(json.dumps(response.model_dump(), indent=2, default=str))

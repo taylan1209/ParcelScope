@@ -6,6 +6,11 @@ cache:
   path: ./cache/http_cache.sqlite
   expire_hours: 12
 
+map:
+  width_px: 1600
+  height_px: 1200
+  dpi: 220
+
 parcels:
   provider: arcgis
   url: https://sampleserver.arcgisonline.com/ArcGIS/rest/services/Parcels/FeatureServer/0

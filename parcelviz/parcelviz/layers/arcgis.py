@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from typing import Dict, Optional
 
@@ -24,6 +25,10 @@ class ArcGISFeatureLayer:
         self.config = config
         self.session = requests.Session()
         self.token = token
+        url = self.config.params.get("url")
+        if not url:
+            raise ArcGISLayerError(f"Layer '{self.config.name}' missing 'url' parameter.")
+        self.url = url.rstrip("/")
 
     def fetch(self, extent: Dict[str, float]) -> gpd.GeoDataFrame:
         """Query features intersecting the provided extent."""
@@ -40,7 +45,7 @@ class ArcGISFeatureLayer:
             "returnGeometry": "true",
         }
         self._apply_token(params)
-        url = f"{self.config.params['url']}/query"
+        url = f"{self.url}/query"
         response = self.session.get(url, params=params, timeout=30)
         response.raise_for_status()
         payload = response.json()
@@ -49,10 +54,14 @@ class ArcGISFeatureLayer:
         return gpd.GeoDataFrame.from_features(payload["features"], crs=f"EPSG:{self.config.target_epsg}")
 
     def _extent_to_arcgis(self, extent: Dict[str, float], srid: int) -> str:
-        return (
-            f"{extent['xmin']},{extent['ymin']},{extent['xmax']},{extent['ymax']}"
-            f",{srid}"
-        )
+        geometry = {
+            "xmin": extent["xmin"],
+            "ymin": extent["ymin"],
+            "xmax": extent["xmax"],
+            "ymax": extent["ymax"],
+            "spatialReference": {"wkid": srid},
+        }
+        return json.dumps(geometry)
 
     def _apply_token(self, params: Dict[str, object]) -> None:
         if self.token:
