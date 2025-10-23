@@ -1,0 +1,2 @@
+[console_scripts]
+parcelviz = parcelviz.cli:app
