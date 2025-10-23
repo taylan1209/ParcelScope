@@ -2,6 +2,19 @@
 
 ParcelViz is a modular toolkit for generating parcel-centric map overlays and imagery. It resolves parcels from addresses or APN values, fetches configured GIS layers, and produces crisp PNG exports per layer with optional contact sheets. The project exposes both a command-line interface and a FastAPI service and ships with a lightweight web UI for ad-hoc rendering.
 
+## Purpose
+
+ParcelViz streamlines parcel due diligence workflows by automating parcel lookup, fetching zoning and environmental overlays, and delivering consistent map exports suited for planning reviews, entitlement packages, and client-ready reports.
+
+## Technologies
+
+- Python 3.9+
+- FastAPI + Typer for API and CLI interfaces
+- GeoPandas, Shapely, and PyProj for spatial data handling
+- Matplotlib and Pillow for cartography and image export
+- Requests and requests-cache for resilient HTTP access
+- Lightweight static web front-end (vanilla JS + CSS)
+
 ## Features
 
 - Configurable data sources via `config/sources.yaml` with per-layer CRS, styling, and map canvas settings.
